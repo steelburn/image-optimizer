@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Optimization Report</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        .summary {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .stat-card {
+            display: inline-block;
+            background: white;
+            border-left: 4px solid #3498db;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            min-width: 200px;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3498db;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            position: sticky;
+            top: 0;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .progress-bar {
+            height: 20px;
+            border-radius: 4px;
+            background-color: #2ecc71;
+            text-align: center;
+            line-height: 20px;
+            color: white;
+            font-weight: bold;
+        }
+        .progress-bar.low {
+            background-color: #3498db;
+        }
+        .progress-bar.medium {
+            background-color: #f39c12;
+        }
+        .progress-bar.high {
+            background-color: #e74c3c;
+        }
+        .chart-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .chart {
+            width: 48%;
+            min-width: 300px;
+            margin-bottom: 20px;
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        @media (max-width: 768px) {
+            .chart {
+                width: 100%;
+            }
+        }
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 14px;
+            color: #7f8c8d;
+            padding: 20px;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Optimization Report</h1>
+    
+    <div class="summary">
+        <h2>Summary</h2>
+        <div>
+            <div class="stat-card">
+                <div class="stat-value">1,245</div>
+                <div class="stat-label">Files Optimized</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">3.72 GB</div>
+                <div class="stat-label">Total Space Saved</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">42.8%</div>
+                <div class="stat-label">Overall Savings</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">8.69 GB</div>
+                <div class="stat-label">Original Size</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">4.97 GB</div>
+                <div class="stat-label">New Size</div>
+            </div>
+        </div>
+        
+        <h3>Process Information</h3>
+        <p><strong>Start Time:</strong> 2025-02-27 09:15:32</p>
+        <p><strong>End Time:</strong> 2025-02-27 09:23:47</p>
+        <p><strong>Files Processed:</strong> 1,312</p>
+        <p><strong>Files Skipped:</strong> 58</p>
+        <p><strong>Files Failed:</strong> 9</p>
+        
+        <div class="progress-container">
+            <div class="progress-bar" style="width: 42.8%">
+                42.8% Space Saved
+            </div>
+        </div>
+    </div>
+    
+    <div class="chart-container">
+        <div class="chart">
+            <h3>Savings by File Type</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>File Type</th>
+                        <th>Count</th>
+                        <th>Original Size</th>
+                        <th>Space Saved</th>
+                        <th>Savings %</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>JPEG</td>
+                        <td>687</td>
+                        <td>4.25 GB</td>
+                        <td>1.87 GB</td>
+                        <td>44.0%</td>
+                    </tr>
+                    <tr>
+                        <td>PNG</td>
+                        <td>342</td>
+                        <td>2.81 GB</td>
+                        <td>1.43 GB</td>
+                        <td>50.9%</td>
+                    </tr>
+                    <tr>
+                        <td>PDF</td>
+                        <td>156</td>
+                        <td>1.12 GB</td>
+                        <td>0.31 GB</td>
+                        <td>27.7%</td>
+                    </tr>
+                    <tr>
+                        <td>TIFF</td>
+                        <td>60</td>
+                        <td>0.51 GB</td>
+                        <td>0.11 GB</td>
+                        <td>21.6%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="chart">
+            <h3>Top Directories by Savings</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Directory</th>
+                        <th>Files</th>
+                        <th>Original Size</th>
+                        <th>Space Saved</th>
+                        <th>Savings %</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>/path/to/your/files/photos/events</td>
+                        <td>287</td>
+                        <td>2.15 GB</td>
+                        <td>1.05 GB</td>
+                        <td>48.8%</td>
+                    </tr>
+                    <tr>
+                        <td>/path/to/your/files/marketing</td>
+                        <td>203</td>
+                        <td>1.73 GB</td>
+                        <td>0.93 GB</td>
+                        <td>53.8%</td>
+                    </tr>
+                    <tr>
+                        <td>/path/to/your/files/products</td>
+                        <td>312</td>
+                        <td>1.65 GB</td>
+                        <td>0.82 GB</td>
+                        <td>49.7%</td>
+                    </tr>
+                    <tr>
+                        <td>/path/to/your/files/documents</td>
+                        <td>175</td>
+                        <td>1.21 GB</td>
+                        <td>0.32 GB</td>
+                        <td>26.4%</td>
+                    </tr>
+                    <tr>
+                        <td>/path/to/your/files/media</td>
+                        <td>98</td>
+                        <td>0.85 GB</td>
+                        <td>0.29 GB</td>
+                        <td>34.1%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <h2>Top Files by Space Saved</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>File</th>
+                <th>Type</th>
+                <th>Directory</th>
+                <th>Original Size</th>
+                <th>New Size</th>
+                <th>Space Saved</th>
+                <th>Savings %</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>banner_large.png</td>
+                <td>PNG</td>
+                <td>/path/to/your/files/marketing</td>
+                <td>128.5 MB</td>
+                <td>42.7 MB</td>
+                <td>85.8 MB</td>
+                <td>
+                    <div class="progress-container" style="margin: 0;">
+                        <div class="progress-bar high" style="width: 66.8%">
+                            66.8%
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>event_photos.jpg</td>
+                <td>JPEG</td>
+                <td>/path/to/your/files/photos/events</td>
+                <td>83.2 MB</td>
+                <td>38.1 MB</td>
+                <td>45.1 MB</td>
+                <td>
+                    <div class="progress-container" style="margin: 0;">
+                        <div class="progress-bar medium" style="width: 54.2%">
+                            54.2%
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>product_catalog.pdf</td>
+                <td>PDF</td>
+                <td>/path/to/your/files/products</td>
+                <td>95.7 MB</td>
+                <td>58.2 MB</td>
+                <td>37.5 MB</td>
+                <td>
+                    <div class="progress-container" style="margin: 0;">
+                        <div class="progress-bar medium" style="width: 39.2%">
+                            39.2%
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>background.png</td>
+                <td>PNG</td>
+                <td>/path/to/your/files/marketing</td>
+                
