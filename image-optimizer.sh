@@ -13,6 +13,7 @@ DRY_RUN=false                       # Set to true to show what would be done wit
 RECURSIVE=true                      # Process subdirectories recursively
 VERBOSE=false                       # Enable verbose output
 ENABLE_BACKUP=true                  # Enable or disable backup functionality
+AGGRESSIVE_OPTIMIZATION=true        # Enable aggressive optimization by default
 
 # Function to handle log file rotation
 rotate_log_file() {
@@ -101,6 +102,161 @@ backup_file() {
     fi
 }
 
+# Function to resize images to a maximum width of 1920 if the width is greater than 1920
+resize_image() {
+    local file="$1"
+    local temp_file=$(mktemp)
+
+    # Extract width and ensure it's numeric
+    local width=$(identify -format "%w" "$file" 2>/dev/null)
+    if [[ "$width" =~ ^[0-9]+$ ]] && [ "$width" -gt 1920 ]; then
+        convert "$file" -resize 1920x1920\> "$temp_file" >> "$LOG_FILE" 2>&1
+        if [ -f "$temp_file" ] && [ -s "$temp_file" ]; then
+            mv "$temp_file" "$file"
+            log "Resized image to max width 1920: $file"
+        else
+            log "Failed to resize image: $file"
+            [ -f "$temp_file" ] && rm "$temp_file"
+        fi
+    else
+        log "Image width is already <= 1920 or invalid: $file (Width: ${width:-unknown})"
+    fi
+}
+
+# Function to reduce color palette to 10-bit if higher than 10-bit
+reduce_color_palette() {
+    local file="$1"
+    local temp_file=$(mktemp)
+
+    local depth=$(identify -format "%z" "$file" 2>/dev/null)
+    if [ "$depth" -gt 8 ]; then
+        convert "$file" -depth 8 "$temp_file" >> "$LOG_FILE" 2>&1
+        if [ -f "$temp_file" ] && [ -s "$temp_file" ]; then
+            mv "$temp_file" "$file"
+            log "Reduced color palette to 8-bit: $file"
+        else
+            log "Failed to reduce color palette: $file"
+            [ -f "$temp_file" ] && rm "$temp_file"
+        fi
+    else
+        log "Image color depth is already <= 8-bit: $file"
+    fi
+}
+
+# Function to reduce image DPI to 96 if higher than 96
+reduce_dpi() {
+    local file="$1"
+    local temp_file=$(mktemp)
+
+    # Extract DPI and ensure it's numeric
+    local dpi=$(identify -format "%x" "$file" 2>/dev/null | awk '{print int($1)}')
+    if [[ "$dpi" =~ ^[0-9]+$ ]] && [ "$dpi" -gt 96 ]; then
+        convert "$file" -density 96 "$temp_file" >> "$LOG_FILE" 2>&1
+        if [ -f "$temp_file" ] && [ -s "$temp_file" ]; then
+            mv "$temp_file" "$file"
+            log "Reduced DPI to 96: $file"
+        else
+            log "Failed to reduce DPI: $file"
+            [ -f "$temp_file" ] && rm "$temp_file"
+        fi
+    else
+        log "Image DPI is already <= 96 or invalid: $file (DPI: ${dpi:-unknown})"
+    fi
+}
+
+# Function to resize TIFF images
+resize_tiff() {
+    local file="$1"
+    local temp_file=$(mktemp --suffix=.tiff)
+
+    local width=$(identify -format "%w" "$file" 2>/dev/null)
+    if [[ "$width" =~ ^[0-9]+$ ]] && [ "$width" -gt 1920 ]; then
+        convert "$file" -resize 1920x1920\> "$temp_file" >> "$LOG_FILE" 2>&1
+        if [ -f "$temp_file" ] && [ -s "$temp_file" ]; then
+            mv "$temp_file" "$file"
+            log "Resized TIFF to max width 1920: $file"
+        else
+            log "Failed to resize TIFF: $file"
+            [ -f "$temp_file" ] && rm "$temp_file"
+        fi
+    else
+        log "TIFF width is already <= 1920 or invalid: $file (Width: ${width:-unknown})"
+    fi
+}
+
+# Function to reduce color palette for TIFF images
+reduce_tiff_color_palette() {
+    local file="$1"
+    local temp_file=$(mktemp --suffix=.tiff)
+
+    local depth=$(identify -format "%z" "$file" 2>/dev/null)
+    if [ "$depth" -gt 8 ]; then
+        convert "$file" -depth 8 "$temp_file" >> "$LOG_FILE" 2>&1
+        if [ -f "$temp_file" ] && [ -s "$temp_file" ]; then
+            mv "$temp_file" "$file"
+            log "Reduced TIFF color palette to 8-bit: $file"
+        else
+            log "Failed to reduce TIFF color palette: $file"
+            [ -f "$temp_file" ] && rm "$temp_file"
+        fi
+    else
+        log "TIFF color depth is already <= 8-bit: $file"
+    fi
+}
+
+# Function to reduce DPI for TIFF images
+reduce_tiff_dpi() {
+    local file="$1"
+    local temp_file=$(mktemp --suffix=.tiff)
+
+    local dpi=$(identify -format "%x" "$file" 2>/dev/null | awk '{print int($1)}')
+    if [[ "$dpi" =~ ^[0-9]+$ ]] && [ "$dpi" -gt 96 ]; then
+        convert "$file" -density 96 "$temp_file" >> "$LOG_FILE" 2>&1
+        if [ -f "$temp_file" ] && [ -s "$temp_file" ]; then
+            mv "$temp_file" "$file"
+            log "Reduced TIFF DPI to 96: $file"
+        else
+            log "Failed to reduce TIFF DPI: $file"
+            [ -f "$temp_file" ] && rm "$temp_file"
+        fi
+    else
+        log "TIFF DPI is already <= 96 or invalid: $file (DPI: ${dpi:-unknown})"
+    fi
+}
+
+# Function to resize PDF files
+resize_pdf() {
+    local file="$1"
+    local temp_file=$(mktemp --suffix=.pdf)
+
+    # PDFs don't have a "width" in the same sense as images, so this is a placeholder
+    log "Resizing PDF is not supported directly: $file"
+}
+
+# Function to reduce color palette for PDF files
+reduce_pdf_color_palette() {
+    local file="$1"
+    log "Reducing color palette for PDF is not supported directly: $file"
+}
+
+# Function to reduce DPI for PDF files
+reduce_pdf_dpi() {
+    local file="$1"
+    local temp_file=$(mktemp --suffix=.pdf)
+
+    gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/screen \
+       -dNOPAUSE -dQUIET -dBATCH \
+       -sOutputFile="$temp_file" "$file" >> "$LOG_FILE" 2>&1
+
+    if [ -f "$temp_file" ] && [ -s "$temp_file" ]; then
+        mv "$temp_file" "$file"
+        log "Reduced PDF DPI to screen quality: $file"
+    else
+        log "Failed to reduce PDF DPI: $file"
+        [ -f "$temp_file" ] && rm "$temp_file"
+    fi
+}
+
 # Function to optimize JPEG files
 optimize_jpeg() {
     local file="$1"
@@ -112,8 +268,7 @@ optimize_jpeg() {
     else
         backup_file "$file"
         jpegoptim --strip-all --max=85 --stdout "$file" > "$temp_file" 2>> "$LOG_FILE"
-        
-        # Only replace if the optimized file is smaller
+
         if [ -f "$temp_file" ] && [ -s "$temp_file" ]; then
             local temp_size=$(stat -c%s "$temp_file")
             if [ $temp_size -lt $filesize_before ]; then
@@ -128,6 +283,13 @@ optimize_jpeg() {
             log "Failed to optimize JPEG: $file"
             [ -f "$temp_file" ] && rm "$temp_file"
         fi
+
+        # Apply aggressive optimization if enabled
+        if $AGGRESSIVE_OPTIMIZATION; then
+            resize_image "$file"
+            reduce_color_palette "$file"
+            reduce_dpi "$file"
+        fi
     fi
 }
 
@@ -136,14 +298,13 @@ optimize_png() {
     local file="$1"
     local filesize_before=$(stat -c%s "$file")
     local temp_file=$(mktemp)
-    
+
     if $DRY_RUN; then
         log "Would optimize PNG: $file"
     else
         backup_file "$file"
         pngquant --force --skip-if-larger --strip --quality=70-85 --output "$temp_file" "$file" >> "$LOG_FILE" 2>&1
-        
-        # Only replace if the optimized file is smaller and the optimization was successful
+
         if [ -f "$temp_file" ] && [ -s "$temp_file" ]; then
             local temp_size=$(stat -c%s "$temp_file")
             if [ $temp_size -lt $filesize_before ]; then
@@ -158,6 +319,13 @@ optimize_png() {
             log "Failed to optimize PNG: $file"
             [ -f "$temp_file" ] && rm "$temp_file"
         fi
+
+        # Apply aggressive optimization if enabled
+        if $AGGRESSIVE_OPTIMIZATION; then
+            resize_image "$file"
+            reduce_color_palette "$file"
+            reduce_dpi "$file"
+        fi
     fi
 }
 
@@ -165,29 +333,44 @@ optimize_png() {
 optimize_tiff() {
     local file="$1"
     local filesize_before=$(stat -c%s "$file")
-    local temp_file=$(mktemp --suffix=.tiff)
-    
+    local temp_dir=$(mktemp -d)
+    local output_file=$(mktemp --suffix=.tiff)
+
     if $DRY_RUN; then
-        log "Would optimize TIFF: $file"
+        log "Would optimize multi-page TIFF: $file"
     else
         backup_file "$file"
-        convert "$file" -compress LZW "$temp_file" >> "$LOG_FILE" 2>&1
-        
-        # Only replace if the optimized file is smaller and the optimization was successful
-        if [ -f "$temp_file" ] && [ -s "$temp_file" ]; then
-            local temp_size=$(stat -c%s "$temp_file")
+
+        # Split TIFF into individual pages
+        convert "$file" "$temp_dir/page-%04d.tiff" >> "$LOG_FILE" 2>&1
+
+        # Optimize each page
+        for page in "$temp_dir"/*.tiff; do
+            local temp_page=$(mktemp --suffix=.tiff)
+            convert "$page" -compress LZW -colorspace Gray -depth 8 "$temp_page" >> "$LOG_FILE" 2>&1
+            mv "$temp_page" "$page"
+        done
+
+        # Recombine optimized pages into a single TIFF
+        convert "$temp_dir/page-*.tiff" "$output_file" >> "$LOG_FILE" 2>&1
+
+        # Check if the optimized file is smaller
+        if [ -f "$output_file" ] && [ -s "$output_file" ]; then
+            local temp_size=$(stat -c%s "$output_file")
             if [ $temp_size -lt $filesize_before ]; then
-                mv "$temp_file" "$file"
+                mv "$output_file" "$file"
                 local saved=$(( (filesize_before - temp_size) * 100 / filesize_before ))
-                log "Optimized TIFF: $file (saved $saved%)"
+                log "Optimized multi-page TIFF: $file (saved $saved%)"
             else
                 log "Skipped TIFF: $file (optimized version not smaller)"
-                rm "$temp_file"
+                rm "$output_file"
             fi
         else
             log "Failed to optimize TIFF: $file"
-            [ -f "$temp_file" ] && rm "$temp_file"
+            [ -f "$output_file" ] && rm "$output_file"
         fi
+
+        rm -rf "$temp_dir"
     fi
 }
 
@@ -198,20 +381,22 @@ optimize_pdf() {
     local temp_file=$(mktemp --suffix=.pdf)
 
     if $DRY_RUN; then
-        log "Would optimize PDF: $file"
+        log "Would optimize multi-page PDF: $file"
     else
         backup_file "$file"
+
+        # Use Ghostscript to optimize the entire PDF
         gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook \
            -dNOPAUSE -dQUIET -dBATCH \
            -sOutputFile="$temp_file" "$file" >> "$LOG_FILE" 2>&1
 
-        # Only replace if the optimized file is smaller
+        # Check if the optimized file is smaller
         if [ -f "$temp_file" ] && [ -s "$temp_file" ]; then
             local temp_size=$(stat -c%s "$temp_file")
             if [ $temp_size -lt $filesize_before ]; then
                 mv "$temp_file" "$file"
                 local saved=$(( (filesize_before - temp_size) * 100 / filesize_before ))
-                log "Optimized PDF: $file (saved $saved%)"
+                log "Optimized multi-page PDF: $file (saved $saved%)"
             else
                 log "Skipped PDF: $file (optimized version not smaller)"
                 rm "$temp_file"
@@ -228,14 +413,13 @@ optimize_gif() {
     local file="$1"
     local filesize_before=$(stat -c%s "$file")
     local temp_file=$(mktemp --suffix=.gif)
-    
+
     if $DRY_RUN; then
         log "Would optimize GIF: $file"
     else
         backup_file "$file"
         gifsicle --optimize=3 --output "$temp_file" "$file" >> "$LOG_FILE" 2>&1
-        
-        # Only replace if the optimized file is smaller and the optimization was successful
+
         if [ -f "$temp_file" ] && [ -s "$temp_file" ]; then
             local temp_size=$(stat -c%s "$temp_file")
             if [ $temp_size -lt $filesize_before ]; then
@@ -250,6 +434,13 @@ optimize_gif() {
             log "Failed to optimize GIF: $file"
             [ -f "$temp_file" ] && rm "$temp_file"
         fi
+
+        # Apply aggressive optimization if enabled
+        if $AGGRESSIVE_OPTIMIZATION; then
+            resize_image "$file"
+            reduce_color_palette "$file"
+            reduce_dpi "$file"
+        fi
     fi
 }
 
@@ -257,19 +448,16 @@ optimize_gif() {
 process_file() {
     local file="$1"
     
-    # Skip files that are not regular files or are not readable
     if [ ! -f "$file" ] || [ ! -r "$file" ]; then
         return
     fi
     
-    # Skip files that are empty or very small
     local filesize=$(stat -c%s "$file")
     if [ $filesize -lt 1024 ]; then
         log "Skipping small file: $file"
         return
     fi
     
-    # Process based on file extension
     case "${file,,}" in
         *.jpg|*.jpeg)
             optimize_jpeg "$file"
@@ -287,7 +475,6 @@ process_file() {
             optimize_gif "$file"
             ;;
         *)
-            # Skip files with unsupported extensions
             ;;
     esac
 }
@@ -296,23 +483,18 @@ process_file() {
 find_and_process() {
     local find_args=("$SOURCE_DIR")
     
-    # Add recursive option if enabled
     if ! $RECURSIVE; then
         find_args+=("-maxdepth" "1")
     fi
     
-    # Add file type filters
     find_args+=("(" "-name" "*.jpg" "-o" "-name" "*.jpeg" "-o" "-name" "*.png" "-o" 
                  "-name" "*.tif" "-o" "-name" "*.tiff" "-o" "-name" "*.pdf" "-o" "-name" "*.gif" ")")
     
-    # Add type filter to only process regular files
     find_args+=("-type" "f")
     
-    # Export functions and variables for xargs
-    export -f log backup_file optimize_jpeg optimize_png optimize_tiff optimize_pdf optimize_gif process_file
-    export SOURCE_DIR BACKUP_DIR ENABLE_BACKUP DRY_RUN LOG_FILE VERBOSE
+    export -f log backup_file optimize_jpeg optimize_png optimize_tiff optimize_pdf optimize_gif process_file resize_image reduce_color_palette reduce_dpi resize_tiff reduce_tiff_color_palette reduce_tiff_dpi resize_pdf reduce_pdf_color_palette reduce_pdf_dpi
+    export SOURCE_DIR BACKUP_DIR ENABLE_BACKUP DRY_RUN LOG_FILE VERBOSE AGGRESSIVE_OPTIMIZATION
     
-    # Use xargs to process files in parallel
     find "${find_args[@]}" -print0 | xargs -0 -P $MAX_THREADS -I{} bash -c 'process_file "$@"' _ {}
 }
 
@@ -323,22 +505,18 @@ main() {
     log "Recursive: $RECURSIVE"
     log "Dry run: $DRY_RUN"
 
-    # Validate source directory
     if [ ! -d "$SOURCE_DIR" ]; then
         log "ERROR: Source directory does not exist: $SOURCE_DIR"
         exit 1
     fi
 
-    # Check for required tools
     check_requirements
 
-    # Create backup directory if specified
     if [ -n "$BACKUP_DIR" ] && [ ! -d "$BACKUP_DIR" ]; then
         mkdir -p "$BACKUP_DIR" || { log "ERROR: Failed to create backup directory: $BACKUP_DIR"; exit 1; }
         log "Created backup directory: $BACKUP_DIR"
     fi
 
-    # Process files
     find_and_process
 
     log "Image optimization process completed"
@@ -360,31 +538,29 @@ usage() {
     echo "  -i, --install-dependencies Install required dependencies"
     echo "  --default                 Run with default configuration variables"
     echo "  --no-backup               Disable backup functionality"
+    echo "  --no-aggressive           Disable aggressive optimization"
     echo "  -h, --help                Display this help and exit"
     echo
     echo "Configuration Variables:"
     echo "  SOURCE_DIR: $SOURCE_DIR"
-    echo "  BACKUP_DIR: $BACKUP_DIR"
     echo "  LOG_FILE: $LOG_FILE"
+    echo "  BACKUP_DIR: $BACKUP_DIR"
     echo "  MAX_THREADS: $MAX_THREADS"
     echo "  DRY_RUN: $DRY_RUN"
     echo "  RECURSIVE: $RECURSIVE"
     echo "  VERBOSE: $VERBOSE"
     echo "  ENABLE_BACKUP: $ENABLE_BACKUP"
+    echo "  AGGRESSIVE_OPTIMIZATION: $AGGRESSIVE_OPTIMIZATION"
     echo
-    echo "Examples:"
-    echo "  $0 --default"
-    echo "  $0 -s /images --no-backup --verbose"
 }
 
-# Check if no arguments are passed
+
 if [[ "${BASH_SOURCE[0]}" == "${0}" && $# -eq 0 ]]; then
     echo "No parameters provided. Showing help:"
     usage
     exit 0
 fi
 
-# Parse command-line arguments if this script is called directly
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     while [[ $# -gt 0 ]]; do
         case $1 in
@@ -421,12 +597,15 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
                 exit 0
                 ;;
             --default)
-                # Use default configuration variables
                 log "Running with default configuration variables."
                 shift
                 ;;
             --no-backup)
                 ENABLE_BACKUP=false
+                shift
+                ;;
+            --no-aggressive)
+                AGGRESSIVE_OPTIMIZATION=false
                 shift
                 ;;
             -h|--help)
@@ -441,6 +620,5 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
         esac
     done
     
-    # Start the optimization process
     main "$@"
 fi
