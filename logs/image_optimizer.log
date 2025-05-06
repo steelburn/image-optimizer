@@ -1,0 +1,23 @@
+[2025-05-06 14:13:31] Running with default configuration variables.
+[2025-05-06 14:13:31] Starting image optimization process
+[2025-05-06 14:13:31] Source directory: /home/steelburn/imageopt/backup
+[2025-05-06 14:13:31] Recursive: true
+[2025-05-06 14:13:31] Dry run: false
+[2025-05-06 14:13:31] Backed up: /home/steelburn/imageopt/backup/5000205575704/34731847173aaf65f86efb1b0ecbbbe8.pdf -> /home/steelburn/imageopt/image-optimizer/backup/5000205575704/34731847173aaf65f86efb1b0ecbbbe8.pdf
+[2025-05-06 14:13:31] Backed up: /home/steelburn/imageopt/backup/dfd44ada1c588e2bf76e2f2273197aba.pdf -> /home/steelburn/imageopt/image-optimizer/backup/dfd44ada1c588e2bf76e2f2273197aba.pdf
+[2025-05-06 14:13:31] Backed up: /home/steelburn/imageopt/backup/5000205575704/9b0560d4e076c4b86f077f8556d41e46.png -> /home/steelburn/imageopt/image-optimizer/backup/5000205575704/9b0560d4e076c4b86f077f8556d41e46.png
+[2025-05-06 14:13:31] Backed up: /home/steelburn/imageopt/backup/5000205576902/9ef5c0f387253d5c0bda576c256c4596.jpg -> /home/steelburn/imageopt/image-optimizer/backup/5000205576902/9ef5c0f387253d5c0bda576c256c4596.jpg
+/home/steelburn/imageopt/backup/5000205576902/9ef5c0f387253d5c0bda576c256c4596.jpg 2550x3508 24bit N JFIF [OK] 699201 --> 568054 bytes (18.76%), optimized.
+[2025-05-06 14:13:31] Optimized JPEG: /home/steelburn/imageopt/backup/5000205576902/9ef5c0f387253d5c0bda576c256c4596.jpg (saved 18%)
+[2025-05-06 14:13:31] Backed up: /home/steelburn/imageopt/backup/5000205576902/3e3be89ac70f5f79768e260d9ee2eb7d.jpg -> /home/steelburn/imageopt/image-optimizer/backup/5000205576902/3e3be89ac70f5f79768e260d9ee2eb7d.jpg
+/home/steelburn/imageopt/backup/5000205576902/3e3be89ac70f5f79768e260d9ee2eb7d.jpg 2550x3508 24bit N JFIF [OK] 623491 --> 494145 bytes (20.75%), optimized.
+[2025-05-06 14:13:31] Optimized JPEG: /home/steelburn/imageopt/backup/5000205576902/3e3be89ac70f5f79768e260d9ee2eb7d.jpg (saved 20%)
+[2025-05-06 14:13:31] Backed up: /home/steelburn/imageopt/backup/5000205576902/a2ae00c81bcf1897043c0c41f2273c79.jpg -> /home/steelburn/imageopt/image-optimizer/backup/5000205576902/a2ae00c81bcf1897043c0c41f2273c79.jpg
+/home/steelburn/imageopt/backup/5000205576902/a2ae00c81bcf1897043c0c41f2273c79.jpg 2550x3508 24bit N JFIF [OK] 505600 --> 395179 bytes (21.84%), optimized.
+[2025-05-06 14:13:31] Optimized JPEG: /home/steelburn/imageopt/backup/5000205576902/a2ae00c81bcf1897043c0c41f2273c79.jpg (saved 21%)
+[2025-05-06 14:13:31] Backed up: /home/steelburn/imageopt/backup/f32327d63eb949ac55533bc0a6df35e5.tiff -> /home/steelburn/imageopt/image-optimizer/backup/f32327d63eb949ac55533bc0a6df35e5.tiff
+[2025-05-06 14:13:31] Optimized PDF: /home/steelburn/imageopt/backup/5000205575704/34731847173aaf65f86efb1b0ecbbbe8.pdf (saved 94%)
+[2025-05-06 14:13:32] Skipped PDF: /home/steelburn/imageopt/backup/dfd44ada1c588e2bf76e2f2273197aba.pdf (optimized version not smaller)
+[2025-05-06 14:13:32] Optimized PNG: /home/steelburn/imageopt/backup/5000205575704/9b0560d4e076c4b86f077f8556d41e46.png (saved 64%)
+[2025-05-06 14:13:32] Skipped TIFF: /home/steelburn/imageopt/backup/f32327d63eb949ac55533bc0a6df35e5.tiff (optimized version not smaller)
+[2025-05-06 14:13:32] Image optimization process completed

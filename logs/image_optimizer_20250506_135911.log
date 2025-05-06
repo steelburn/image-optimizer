@@ -1,0 +1,20 @@
+[2025-05-06 13:53:14] Starting image optimization process
+[2025-05-06 13:53:14] Source directory: /home/steelburn/imageopt/backup
+[2025-05-06 13:53:14] Recursive: true
+[2025-05-06 13:53:14] Dry run: false
+[2025-05-06 13:53:14] ERROR: The following required tools are missing: jpegoptim pngquant imagemagick ghostscript
+[2025-05-06 13:53:14] Please install them using: sudo dnf install jpegoptim pngquant imagemagick ghostscript
+[2025-05-06 13:53:14] For some tools, you might need to enable EPEL repository:
+[2025-05-06 13:53:14] sudo dnf install epel-release
+[2025-05-06 13:53:14] sudo dnf install jpegoptim pngquant ImageMagick ghostscript
+[2025-05-06 13:53:20] Starting image optimization process
+[2025-05-06 13:53:20] Source directory: /home/steelburn/imageopt/backup
+[2025-05-06 13:53:20] Recursive: true
+[2025-05-06 13:53:20] Dry run: false
+[2025-05-06 13:53:20] ERROR: The following required tools are missing: jpegoptim pngquant imagemagick ghostscript
+[2025-05-06 13:53:20] Please install them using: sudo dnf install jpegoptim pngquant imagemagick ghostscript
+[2025-05-06 13:53:20] For some tools, you might need to enable EPEL repository:
+[2025-05-06 13:53:20] sudo dnf install epel-release
+[2025-05-06 13:53:20] sudo dnf install jpegoptim pngquant ImageMagick ghostscript
+[2025-05-06 13:57:16] Installing required dependencies...
+[2025-05-06 13:59:11] Dependencies installed successfully.
