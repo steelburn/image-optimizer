@@ -88,7 +88,7 @@ Basic usage:
 Available options:
 ```
 Usage: ./image_optimizer.sh [OPTIONS]
-Optimize images in a file server (JPG, PNG, TIFF, PDF)
+Optimize images in a file server (JPG, PNG, TIFF, PDF, GIF)
 
 Options:
   -s, --source DIR          Source directory
@@ -97,7 +97,11 @@ Options:
   -t, --threads NUM         Number of parallel processes (default: 4)
   -n, --dry-run             Show what would be done without making changes
   -r, --no-recursive        Do not process subdirectories
+  -v, --verbose             Enable verbose output
   -i, --install-dependencies Install required dependencies
+  --default                 Run with default configuration variables
+  --no-backup               Disable backup functionality
+  --no-aggressive           Disable aggressive optimization
   -h, --help                Display this help and exit
 ```
 
@@ -129,6 +133,21 @@ Options:
 ### Dry run to see what would happen
 ```bash
 ./image_optimizer.sh --source /var/www/html/uploads --dry-run
+```
+
+### Running with default configuration
+```bash
+./image_optimizer.sh --default
+```
+
+### Disabling backup functionality
+```bash
+./image_optimizer.sh --source /path/to/your/files --no-backup
+```
+
+### Disabling aggressive optimization
+```bash
+./image_optimizer.sh --source /path/to/your/files --no-aggressive
 ```
 
 ### Generate a report with a custom title
