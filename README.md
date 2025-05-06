@@ -18,6 +18,7 @@ The optimization process maintains image quality while significantly reducing fi
 ### Image Optimizer
 
 - Optimizes multiple image formats (JPG, PNG, TIFF, GIF) and PDF files
+- Handles multi-page TIFF and PDF files by processing each page individually
 - Processes files in parallel for better performance
 - Preserves directory structure
 - Creates backups of original files (optional)
@@ -29,6 +30,7 @@ The optimization process maintains image quality while significantly reducing fi
 ### Report Generator
 
 - Parses the optimizer logs to generate comprehensive HTML reports
+- Handles multi-page file optimizations in the report
 - Shows total space saved and percentage of reduction
 - Breaks down savings by file type and directory
 - Lists the top files with the highest space savings
